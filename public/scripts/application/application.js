@@ -6,27 +6,23 @@ var application = application || (function () {
 
   // Private space
 
-  var _initialize = function(){
+  var _bootstrap = function(){
+
+    if (typeof application.polyfills === 'undefined') {
+      console.log('application.js : No "polyfills" module found! Be sure to load it up first!');
+      return;
+    };
+
+    if (typeof application.utilities === 'undefined') {
+      console.log('application.js : No "utilities" module found! Be sure to load it up first!');
+      return;
+    };
 
     // Setup polyfills
 
-    _initialize_request_animation_frame();
+    application.polyfills.setup();
 
   };
-
-  var _initialize_request_animation_frame = function(){
-    if (!window.requestAnimationFrame){
-      window.requestAnimationFrame = (function(){
-        return window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function(callback, element){
-          window.setTimeout(callback, 1000 / 60);
-        };
-      })();
-    };
-  }
 
   // Public space
 
@@ -34,8 +30,8 @@ var application = application || (function () {
 
     // Initialize the application
 
-    initialize: function (canvas) {
-      _initialize(canvas);
+    bootstrap: function (canvas) {
+      _bootstrap(canvas);
     }
 
   };

@@ -13,6 +13,8 @@ var views = [
 
 var application = [
   'public/scripts/application/application.js',
+  'public/scripts/application/polyfills.js',
+  'public/scripts/application/utilities.js',
   'public/scripts/index.js'
 ];
 
@@ -72,6 +74,7 @@ gulp.task('watch', function(){
   files_to_watch.push(libs);
   files_to_watch.push(styles);
   files_to_watch.push(views);
+  files_to_watch.push('gulpfile.js');
   gulp.watch(files_to_watch, ['build']);
 });
 
