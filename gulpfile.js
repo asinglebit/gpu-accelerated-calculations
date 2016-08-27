@@ -13,7 +13,7 @@ var application = [
   'public/scripts/application/polyfills.js',
   'public/scripts/application/renderer.js',
   'public/scripts/application/utilities.js',
-  'public/scripts/application/camera.js',
+  'public/scripts/application/png.js',
   'public/scripts/index.js'
 ];
 

@@ -6,7 +6,7 @@ void function(){
 
   // Check application availability
 
-  if (typeof application == "undefined") {
+  if (typeof application === "undefined") {
     console.log("polyfills.js : No 'application' module found! Be sure to load it up first!");
     return;
   };

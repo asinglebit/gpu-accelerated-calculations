@@ -18,7 +18,12 @@ var application = application || (function () {
       return;
     };
 
-    if (typeof application.renderer == "undefined") {
+    if (typeof application.png === "undefined") {
+      console.log("application.js : No 'png' module found! Be sure to load it up first!");
+      return;
+    };
+
+    if (typeof application.renderer === "undefined") {
       console.log("application.js : No 'renderer' module found! Be sure to load it up first!");
       return;
     };
@@ -36,26 +41,33 @@ var application = application || (function () {
 
     // Initialize data
 
-    var data = [];
-    for (var i = 0; i < 16; i++) {
-      for (var j = 0; j < 16; j++) {
-        var r = parseInt(Math.floor(Math.random() * (255 + 1)));
-        var g = parseInt(Math.floor(Math.random() * (255 + 1)));
-        var b = parseInt(Math.floor(Math.random() * (255 + 1)));
-        var a = parseInt(Math.floor(Math.random() * (255 + 1)));
-        data.push(r, g, b, a);
+    var int32 = application.utilities.get_random_int32();
+
+    console.log("Generated value");
+    console.log(int32);
+
+    var rgba = application.utilities.int32_to_rgba(int32);
+    console.log("Generated color");
+    console.log(rgba);
+
+    // Pack data
+
+    var packed_data = [];
+    for (var i = 0; i < 1; i++) {
+      for (var j = 0; j < 1; j++) {
+        Array.prototype.push.apply(packed_data, rgba);
       }
     }
 
-    application.utilities.measure(function(){
-      application.data = application.utilities.get_data_url(data, 16, 16);
-    });
+    // Convert to base64 data uri
 
-    // Initialize modules
+    application.data = application.utilities.get_data_url(packed_data, 1, 1);
 
-    application.renderer.initialize(16, 16);
+    // Initialize rendering module
 
-    // Initialize
+    application.renderer.initialize(1, 1);
+
+    // Render
 
     _tick();
   }

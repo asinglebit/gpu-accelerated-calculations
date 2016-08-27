@@ -6,7 +6,7 @@ void function(){
 
   // Check application availability
 
-  if (typeof application == "undefined") {
+  if (typeof application === "undefined") {
     console.log("renderer.js : No 'application' module found! Be sure to load it up first!");
     return;
   };
@@ -40,8 +40,10 @@ void function(){
       varying vec2 v_uv;
       uniform sampler2D u_sampler;
       uniform vec2 u_resolution;
+
       void main(void) {
-        gl_FragColor = texture2D(u_sampler, vec2(v_uv.s, v_uv.t));
+        vec4 color = texture2D(u_sampler, vec2(v_uv.s, v_uv.t));
+        gl_FragColor = color;
       }
       `,
       attributes: {
@@ -59,28 +61,35 @@ void function(){
   // Private methods
 
   var _initialize = function(width, height){
-    _init_viewport(width*4, height*4);
+    _init_viewport(width, height);
     _init_shaders();
     _init_full_screen_quad_buffer();
     _init_texture();
     _loading_complete();
+
+    setTimeout(function(){
+      console.log("Calculated color");
+      var pixels = new Uint8Array(1 * 1 * 4);
+      _context.readPixels(0, 0, 1, 1, _context.RGBA, _context.UNSIGNED_BYTE, pixels);
+      console.log(pixels);
+      console.log("Calculated value");
+      console.log(application.utilities.rgba_to_int32(pixels));
+    }, 0);
   };
 
   var _init_texture = function(){
     var texture = _context.createTexture();
     var image = new Image();
-    image.onload = function() {
-      _context.bindTexture(_context.TEXTURE_2D, texture);
-      _context.texImage2D(_context.TEXTURE_2D, 0, _context.RGBA, _context.RGBA, _context.UNSIGNED_BYTE, image);
-      _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_MAG_FILTER, _context.NEAREST);
-      _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_MIN_FILTER, _context.NEAREST);
-      _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_WRAP_S, _context.CLAMP_TO_EDGE);
-      _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_WRAP_T, _context.CLAMP_TO_EDGE);
-      _context.generateMipmap(_context.TEXTURE_2D);
-      _context.bindTexture(_context.TEXTURE_2D, null);
-      _texture = texture;
-    }
     image.src = application.data;
+    _context.bindTexture(_context.TEXTURE_2D, texture);
+    _context.texImage2D(_context.TEXTURE_2D, 0, _context.RGBA, _context.RGBA, _context.UNSIGNED_BYTE, image);
+    _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_MAG_FILTER, _context.NEAREST);
+    _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_MIN_FILTER, _context.NEAREST);
+    _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_WRAP_S, _context.CLAMP_TO_EDGE);
+    _context.texParameteri(_context.TEXTURE_2D, _context.TEXTURE_WRAP_T, _context.CLAMP_TO_EDGE);
+    _context.generateMipmap(_context.TEXTURE_2D);
+    _context.bindTexture(_context.TEXTURE_2D, null);
+    _texture = texture;
   }
 
   var _init_viewport = function(width, height){
@@ -90,13 +99,10 @@ void function(){
     var _canvas = document.createElement('canvas');
     _canvas.width = _width = width;
     _canvas.height = _height = height;
-    document.body.appendChild(_canvas);
-    _context = _canvas.getContext("experimental-webgl");
+    _context = _canvas.getContext("experimental-webgl", {premultipliedAlpha: false, preserveDrawingBuffer: true});
     _context.clearColor(0.0, 0.0, 0.0, 0.0);
     _context.disable(_context.DEPTH_TEST);
     _context.depthMask(false);
-    _context.enable(_context.BLEND);
-    _context.blendFunc(_context.SRC_ALPHA, _context.ONE);
     _context.viewport(0, 0, _width, _height);
 
     // Initialize extensions
@@ -127,9 +133,9 @@ void function(){
   };
 
   var _clear = function(){
-    _context.clearColor(0.0, 0.0, 0.0, 0.0);
-    _context.clearDepth(1.0);
-    _context.clear(_context.COLOR_BUFFER_BIT | _context.DEPTH_BUFFER_BIT);
+    _context.clearColor(0,0, 0, 0);
+    _context.colorMask(true, true, true, true);
+    _context.clear(_context.COLOR_BUFFER_BIT);
   };
 
   // Initialize shaders
