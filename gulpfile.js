@@ -4,9 +4,6 @@ var fs = require('fs');
 var del = require('del');
 var gp_concat = require('gulp-concat');
 
-var libs = [
-];
-
 var views = [
   'public/index.html'
 ];
@@ -14,7 +11,9 @@ var views = [
 var application = [
   'public/scripts/application/application.js',
   'public/scripts/application/polyfills.js',
+  'public/scripts/application/renderer.js',
   'public/scripts/application/utilities.js',
+  'public/scripts/application/camera.js',
   'public/scripts/index.js'
 ];
 
@@ -22,17 +21,9 @@ var styles = [
   'public/styles/layout.css'
 ];
 
-gulp.task('cleanup-pre', function(){
-  return del('public/libs/*');
-});
-
-gulp.task('libs', function(){
-  return gulp.src(libs).pipe(gulp.dest('public/libs'));
-});
-
 // Default task
 
-gulp.task('default', ['cleanup-pre', 'libs']);
+gulp.task('default', ['cleanup-pre']);
 
 // Build task
 
@@ -71,7 +62,6 @@ gulp.task('server', function() {
 gulp.task('watch', function(){
   var files_to_watch = [];
   files_to_watch.push(application);
-  files_to_watch.push(libs);
   files_to_watch.push(styles);
   files_to_watch.push(views);
   files_to_watch.push('gulpfile.js');
