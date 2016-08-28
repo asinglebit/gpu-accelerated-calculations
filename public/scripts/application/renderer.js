@@ -41,9 +41,31 @@ void function(){
       uniform sampler2D u_sampler;
       uniform vec2 u_resolution;
 
+      const int ONE_BYTE = 256;
+      const int TWO_BYTES = 65536;
+      const int THREE_BYTES = 16777216;
+
+      vec4 int32_to_rgba(int value){
+        ivec3 baked = ivec3(int(value/THREE_BYTES), int(value/TWO_BYTES), int(value/ONE_BYTE));
+        vec4 color = vec4(float(baked.x), float(baked.y - baked.x * ONE_BYTE), float(baked.z - baked.y * ONE_BYTE), float(value - baked.z * ONE_BYTE));
+        return color / 255.;
+      }
+
+      int rgba_to_int32(vec4 rgba){
+        rgba *= 255.;
+        return int(rgba.r) * THREE_BYTES + int(rgba.g) * TWO_BYTES + int(rgba.b) * ONE_BYTE + int(rgba.a);
+      }
+
       void main(void) {
         vec4 color = texture2D(u_sampler, vec2(v_uv.s, v_uv.t));
-        gl_FragColor = color;
+        int value = rgba_to_int32(color);
+
+        // Custom calculations
+        for (int i = 0; i < 9000000; ++i){
+          value += int(tan(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(float(value))))))))))))))))))));
+        }
+
+        gl_FragColor = int32_to_rgba(value);
       }
       `,
       attributes: {
@@ -66,15 +88,6 @@ void function(){
     _init_full_screen_quad_buffer();
     _init_texture();
     _loading_complete();
-
-    setTimeout(function(){
-      console.log("Calculated color");
-      var pixels = new Uint8Array(1 * 1 * 4);
-      _context.readPixels(0, 0, 1, 1, _context.RGBA, _context.UNSIGNED_BYTE, pixels);
-      console.log(pixels);
-      console.log("Calculated value");
-      console.log(application.utilities.rgba_to_int32(pixels));
-    }, 0);
   };
 
   var _init_texture = function(){
@@ -99,6 +112,7 @@ void function(){
     var _canvas = document.createElement('canvas');
     _canvas.width = _width = width;
     _canvas.height = _height = height;
+    document.body.appendChild(_canvas);
     _context = _canvas.getContext("experimental-webgl", {premultipliedAlpha: false, preserveDrawingBuffer: true});
     _context.clearColor(0.0, 0.0, 0.0, 0.0);
     _context.disable(_context.DEPTH_TEST);
@@ -129,7 +143,17 @@ void function(){
 
   var _tick_ready = function(){
     _clear();
+
+    application.utilities.measure(function(){
     _draw_full_screen_quad();
+      console.log("Calculated color");
+      var pixels = new Uint8Array(1 * 1 * 4);
+      _context.readPixels(0, 0, 1, 1, _context.RGBA, _context.UNSIGNED_BYTE, pixels);
+      console.log(pixels);
+      console.log("Calculated value");
+      console.log(application.utilities.rgba_to_int32(pixels));
+      _loading();
+    });
   };
 
   var _clear = function(){

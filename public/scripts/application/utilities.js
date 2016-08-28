@@ -44,6 +44,7 @@ void function(){
 
   function _int32_to_rgba(int){
     var baked = [parseInt(int / THREE_BYTES), parseInt(int / TWO_BYTES), parseInt(int / ONE_BYTE)];
+    console.log(baked);
     return [baked[0], baked[1] - baked[0] * ONE_BYTE, baked[2] - baked[1] * ONE_BYTE, int - baked[2] * ONE_BYTE];
   };
 
@@ -52,7 +53,7 @@ void function(){
   };
 
   function _get_random_int32(){
-    return Math.floor(Math.random() * (FOUR_BYTES + 1));
+    return Math.floor(Math.random() * (FOUR_BYTES/2));
   };
 
   var utilities = {

@@ -41,7 +41,7 @@ var application = application || (function () {
 
     // Initialize data
 
-    var int32 = application.utilities.get_random_int32();
+    var int32 = 1234;
 
     console.log("Generated value");
     console.log(int32);
@@ -58,6 +58,13 @@ var application = application || (function () {
         Array.prototype.push.apply(packed_data, rgba);
       }
     }
+
+    application.utilities.measure(function(){
+      for (var i = 0; i < 9000000; ++i){
+        int32 += parseInt((Math.tan(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(Math.sin(Math.cos(int32))))))))))))))))))));
+      }
+      console.log(int32);
+    });
 
     // Convert to base64 data uri
 
