@@ -46,13 +46,13 @@ void function(){
       const int THREE_BYTES = 16777216;
 
       vec4 int32_to_rgba(int value){
-        ivec3 baked = ivec3(int(value/THREE_BYTES), int(value/TWO_BYTES), int(value/ONE_BYTE));
+        ivec3 baked = ivec3(floor(float(value/THREE_BYTES)), floor(float(value/TWO_BYTES)), floor(float(value/ONE_BYTE)));
         vec4 color = vec4(float(baked.x), float(baked.y - baked.x * ONE_BYTE), float(baked.z - baked.y * ONE_BYTE), float(value - baked.z * ONE_BYTE));
         return color / 255.;
       }
 
       int rgba_to_int32(vec4 rgba){
-        rgba *= 255.;
+        rgba *= 256.;
         return int(rgba.r) * THREE_BYTES + int(rgba.g) * TWO_BYTES + int(rgba.b) * ONE_BYTE + int(rgba.a);
       }
 
@@ -60,7 +60,7 @@ void function(){
         vec4 color = texture2D(u_sampler, vec2(v_uv.s, v_uv.t));
         int value = rgba_to_int32(color);
 
-        // Custom calculations
+        //Custom calculations
         for (int i = 0; i < 9000000; ++i){
           value += int(tan(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(sin(cos(float(value))))))))))))))))))));
         }
