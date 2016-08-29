@@ -3,6 +3,7 @@ var child = require('child_process');
 var fs = require('fs');
 var del = require('del');
 var gp_concat = require('gulp-concat');
+var gp_minify = require('gulp-minifier');
 
 var views = [
   'public/index.html'
@@ -38,6 +39,7 @@ gulp.task('views', ['cleanup-pre'], function(){
 
 gulp.task('application', ['cleanup-pre'], function(){
   return gulp.src(application)
+  .pipe(gp_minify({minify: true, minifyJS: true}))
   .pipe(gp_concat('scripts.min.js'))
   .pipe(gulp.dest('public/dist'));
 });
