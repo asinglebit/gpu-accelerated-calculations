@@ -102,7 +102,6 @@ void function(){
     var _canvas = document.createElement('canvas');
     _canvas.width = _width = width;
     _canvas.height = _height = height;
-    document.body.appendChild(_canvas);
     _context = _canvas.getContext("experimental-webgl", {premultipliedAlpha: false, preserveDrawingBuffer: true});
     _context.clearColor(0.0, 0.0, 0.0, 0.0);
     _context.disable(_context.DEPTH_TEST);
@@ -128,10 +127,12 @@ void function(){
   }
 
   var _tick_loading = function(){
+    console.log("loading");
     _clear();
   };
 
   var _tick_ready = function(){
+    console.log("ready");
     _clear();
 
     application.utilities.measure(function(){
@@ -142,7 +143,9 @@ void function(){
       console.log(pixels);
       console.log("Calculated value");
       console.log(application.utilities.rgba_to_int32(pixels));
-      _loading();
+      _context.getExtension('WEBGL_lose_context').loseContext();
+      application.continue = false;
+      console.log("Done");
     });
   };
 

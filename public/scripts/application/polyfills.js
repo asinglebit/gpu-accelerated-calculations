@@ -4,25 +4,25 @@ void function(){
 
   'use strict';
 
-  // Check application availability
-
-  if (typeof application === "undefined") {
-    console.log("polyfills.js : No 'application' module found! Be sure to load it up first!");
-    return;
-  };
-
   function _initialize_request_animation_frame() {
-    if (!window.requestAnimationFrame) {
-      window.requestAnimationFrame = (function() {
-        return window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        function(callback, element){
-          window.setTimeout(callback, 1000 / 60);
-        };
-      })();
-    };
+    if (!window.requestAnimationFrame) (function() {
+      function requestAnimationFrame(callback) {
+        var currentTime = now(), delay = Math.max(0, 16 - (currentTime - lastTime));
+        lastTime = currentTime;
+        return setTimeout(function () {
+          lastTime = now();
+          callback(lastTime - startTime);
+        }, delay);
+      };
+      function cancelAnimationFrame(id) {
+        clearTimeout(id);
+      };
+      var raf = 'RequestAnimationFrame', caf = 'CancelAnimationFrame', webkit = 'webkit', moz = 'moz', now = Date.now || function () {
+        return new Date().getTime();
+      }, startTime = now(), lastTime = startTime;
+      window.requestAnimationFrame = window[moz + raf] || window[webkit + raf] || requestAnimationFrame;
+      window.cancelAnimationFrame = window[moz + caf] || window[webkit + caf] || window[webkit + 'CancelRequestAnimationFrame'] || cancelAnimationFrame;
+    })();
   };
 
   function _initialize_btoa() {
@@ -44,7 +44,7 @@ void function(){
   function _setup(){
     _initialize_request_animation_frame();
     _initialize_btoa();
-  }
+  };
 
   var polyfills = {
 

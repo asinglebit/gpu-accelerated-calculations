@@ -75,7 +75,7 @@ var application = application || (function () {
     application.renderer.initialize(1, 1);
 
     // Render
-
+    application.continue = true;
     _tick();
   }
 
@@ -86,8 +86,11 @@ var application = application || (function () {
     application.renderer.tick();
 
     // Setup the next frame
-
-    requestAnimationFrame(tick);
+    if (application.continue === true){
+      application.renderer.req = window.requestAnimationFrame(tick);
+    } else {
+      window.cancelAnimationFrame(application.renderer.req);
+    }
   }
 
   // Public space
